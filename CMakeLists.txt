@@ -52,3 +52,12 @@ target_include_directories(quickjs_static PUBLIC
 # --- 构建完成后的提示信息 ---
 message(STATUS "QuickJS configured for HarmonyOS (aarch64-linux-ohos).")
 message(STATUS "Run 'ninja' to build the target: libquickjs.a")
+
+# --- 为 Native 测试创建一个可执行文件 ---
+# 这部分只在 Native 编译时有意义
+add_executable(qjs_test_runner main.c)
+target_link_libraries(qjs_test_runner PRIVATE quickjs_static)
+# 在非 Windows 平台上链接 math, dl, pthread
+if(UNIX AND NOT APPLE)
+    target_link_libraries(qjs_test_runner PRIVATE m dl pthread)
+endif()
