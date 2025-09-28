@@ -1,4 +1,5 @@
 // 文件: quickjs/main.c
+
 #include <stdio.h>
 #include <string.h>
 #include "quickjs.h"
@@ -25,7 +26,6 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    /* 加载 std 和 os 模块 */
     js_std_add_helpers(ctx, argc, argv);
 
     const char *script = "let a = 5; let b = 10; console.log('Hello from QuickJS!', a + b); a + b;";
@@ -48,10 +48,16 @@ int main(int argc, char **argv)
         JS_FreeValue(ctx, val);
     }
 
-    js_std_loop(ctx); // 处理可能的 promise 等事件
+    /*
+     * 对于同步脚本，在 JS_Eval 之后不需要事件循环。
+     * 直接清理资源即可。
+     * js_std_loop(ctx); // <--- 已移除
+     */
 
     JS_FreeContext(ctx);
     JS_FreeRuntime(rt);
+
+    printf("--- Cleanup successful. Exiting. ---\n"); // 加一句输出来确认
 
     return 0;
 }
